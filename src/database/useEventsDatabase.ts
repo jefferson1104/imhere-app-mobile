@@ -25,8 +25,21 @@ export function useEventsDatabase() {
       return { insertedRowId };
     } catch (error) {
       throw error;
+    } finally {
+      await query.finalizeAsync();
     }
   };
 
-  return { create };
+  async function listAll() {
+    const query = "SELECT * FROM events"
+
+    try {
+      const result = await database.getAllAsync(query);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return { create, listAll };
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
@@ -7,13 +7,14 @@ import { AppNavigatorRoutesProps } from '@routes/app.routes';
 
 import backgroundImage from '@assets/background.png';
 
+import { useEventsDatabase } from '@database/useEventsDatabase';
+
 import { Header } from '@components/Header';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { DateTimePicker } from '@components/DateTimePicker';
 
 import { Container, Content, Footer, Title } from './styles';
-import { useEventsDatabase } from '@database/useEventsDatabase';
 
 export function Home() {
   // Hooks
@@ -30,20 +31,24 @@ export function Home() {
     navigation.navigate('registerParticipants', { eventName, eventDate });
   };
 
+  const handleGoToEventList = () => {
+    navigation.navigate('eventList');
+  };
+
   const handleCreateEvent = async () => {
     if (!eventName) {
       Alert.alert('Event name is empty!', 'Please inform the event name.');
       return;
-    }
+    };
 
     if (!eventDate) {
       Alert.alert('Event date is empty!', 'Please inform the event date.');
       return;
-    }
+    };
 
     try {
       setIsLoading(true);
-      const response  = await eventsDatabase.create({ name: eventName, date: eventDate });
+      const response  = await eventsDatabase.create({ name: eventName.trim(), date: eventDate });
       Alert.alert('Event created!', `Event ${eventName} created with id ${response.insertedRowId}!` , [
         {
           text: 'Go to register participants',
@@ -51,15 +56,22 @@ export function Home() {
         },
         {
           text: 'Go to events list',
-          onPress: () => console.log('Go to events list')
+          onPress: handleGoToEventList
         }
       ]);
     } catch (error) {
+      Alert.alert('Error creating event!', 'An error occurred while creating the event. Please try again.');
       console.error('Error creating event:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Effects
+  useEffect(() => {
+    setEventName('');
+    setEventDate('');
+  }, [])
 
   // Renders
   return (
@@ -100,8 +112,9 @@ export function Home() {
 
       <Footer>
         <Button
-          title='Check your events'
+          title='Go to events list'
           type='OUTLINE'
+          onPress={handleGoToEventList}
           activeOpacity={0.7}
         />
       </Footer>

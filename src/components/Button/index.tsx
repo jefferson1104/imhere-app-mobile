@@ -8,7 +8,7 @@ interface IButtonProps extends TouchableOpacityProps {
   title: string;
   type?: IButtonType;
   isLoading?: boolean;
-}
+};
 
 export function Button({ title, type = 'DEFAULT', isLoading = false, ...rest }: IButtonProps) {
   // Renders
