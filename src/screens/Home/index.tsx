@@ -1,102 +1,84 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { Alert } from 'react-native';
+import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
 
-import { Participant } from '../../components/Participant';
+import { AppNavigatorRoutesProps } from '@routes/app.routes';
 
-import { styles } from './styles';
+import backgroundImage from '@assets/background.png';
+
+import { Header } from '@components/Header';
+import { Input } from '@components/Input';
+import { Button } from '@components/Button';
+import { DateTimePicker } from '@components/DateTimePicker';
+
+import { Container, Content, Footer, Title } from './styles';
 
 export function Home() {
-  // States
-  const [participants, setParticipants] = useState<string[]>([]);
-  const [participantName, setParticipantName] = useState('');
+  // Hooks
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
 
-  // Constants
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  // States
+  const [eventName, setEventName] = useState('');
+  const [eventDate, setEventDate] = useState('');
 
   // Methods
-  const handleParticipantAdd = () => {
-    if (!participantName) {
-      Alert.alert('Nome do participante vazio!', 'Informe o nome do participante.');
+  const handleGoRegisterParticipants = () => {
+    if (!eventName) {
+      Alert.alert('Event name is empty!', 'Please inform the event name.');
       return;
     }
 
-    if (participants.includes(participantName)) {
-      Alert.alert('Participante já cadastrado!', 'Já existe um participante com esse nome.');
+    if (!eventDate) {
+      Alert.alert('Event date is empty!', 'Please inform the event date.');
       return;
     }
 
-    setParticipants(prevState => [...prevState, participantName]);
-    setParticipantName('');
-  };
-
-  const handleParticipantRemove = (name: string) => {
-    const removeParticipant = () => {
-      const newParticipants = participants.filter(participant => participant !== name);
-      setParticipants(newParticipants);
-      Alert.alert(`O participante ${name} foi removido com sucesso.`)
-    };
-
-    Alert.alert('Remover participante!', `Deseja remover o participante ${name}?`, [
-      {
-        text: 'Sim',
-        onPress: () => removeParticipant()
-      },
-      {
-        text: 'Não',
-        style: 'cancel'
-      }
-    ]);
+    navigation.navigate('registerParticipants', { eventName, eventDate });
   };
 
   // Renders
   return (
-    <View style={styles.container}>
-      <Text style={styles.eventName}>
-        Event Name
-      </Text>
-
-      <Text style={styles.eventDate}>
-        {formattedDate}
-      </Text>
-
-      <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder='Guest name'
-          placeholderTextColor="#6B6B6B"
-          onChangeText={(text) => setParticipantName(text)}
-          value={participantName}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleParticipantAdd}>
-          <Text style={styles.buttonText}>
-            +
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={participants}
-        keyExtractor={item => item}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <Participant
-            name={item}
-            onRemove={() => handleParticipantRemove(item)}
-          />
-        )}
-        ListEmptyComponent={() => (
-          <Text style={styles.emptyList}>
-            No guests registered. Add guests to your guest list.
-          </Text>
-        )}
+    <Container>
+      <Image
+        source={backgroundImage}
+        contentFit='cover'
+        style={{
+          flex: 1,
+          position: 'absolute',
+          width: 480,
+          height: 1000,
+        }}
       />
-    </View>
+
+      <Header />
+
+      <Content>
+        <Title>
+          Create a new event
+        </Title>
+        <Input
+          placeholder="Event name"
+          value={eventName}
+          onChangeText={(text) => setEventName(text)}
+        />
+        <DateTimePicker
+          onChange={(date) => setEventDate(date.toISOString())}
+          currentDate={eventDate ? new Date(eventDate) : undefined}
+        />
+        <Button
+          title='Create event'
+          onPress={handleGoRegisterParticipants}
+        />
+      </Content>
+
+      <Footer>
+        <Button
+          title='Check your events'
+          type='OUTLINE'
+          activeOpacity={0.7}
+        />
+      </Footer>
+    </Container>
   );
 }

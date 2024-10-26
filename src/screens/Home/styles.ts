@@ -1,53 +1,26 @@
-import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#131016',
-    padding: 24
-  },
-  eventName: {
-    color: '#FFF',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 48
-  },
-  eventDate: {
-    color: '#6B6B6B',
-    fontSize: 16,
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#1F1E25',
-    height: 56,
-    borderRadius: 5,
-    color: '#FFF',
-    padding: 16,
-    fontSize: 16,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 24,
-  },
-  button: {
-    width: 56,
-    height: 56,
-    borderRadius: 5,
-    backgroundColor: '#31CF67',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  form: {
-    width: '100%',
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 36,
-    marginBottom: 42
-  },
-  emptyList: {
-    color: '#6B6B6B',
-    fontSize: 16,
-    marginTop: 24,
-    textAlign: 'center'
-  }
-});
+export const Container = styled(SafeAreaView)`
+  flex: 1;
+  padding: 0 24px;
+  background-color: ${({ theme }) => theme.COLORS.GRAY_700};
+`;
+
+export const Title = styled.Text`
+  font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
+  font-size: ${({ theme }) => theme.FONT_SIZE.XL}px;
+  color: ${({ theme }) => theme.COLORS.WHITE};
+`;
+
+export const Content = styled.View`
+  flex: 1;
+  justify-content: center;
+  gap: 16px;
+`;
+
+export const Footer = styled.View`
+  flex: 1;
+  justify-content: flex-end;
+  margin-bottom: 32px;
+`;
