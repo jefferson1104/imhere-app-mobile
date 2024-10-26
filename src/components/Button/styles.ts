@@ -1,5 +1,6 @@
-import { TouchableOpacity } from 'react-native';
-import styled, { css } from 'styled-components/native';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import styled from 'styled-components/native';
+
 import { IButtonType } from '.';
 
 export type ButtonProps = {
@@ -39,3 +40,8 @@ export const Title = styled.Text<ButtonProps>`
     if (type === 'DANGER') return theme.COLORS.WHITE;
   }};
 `;
+
+export const Loading = styled(ActivityIndicator).attrs<ButtonProps>(({ theme, type }) => ({
+  size: 32,
+  color: type === 'OUTLINE' ? theme.COLORS.BLUE : theme.COLORS.WHITE
+}))``;

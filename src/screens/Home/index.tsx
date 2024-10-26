@@ -13,17 +13,24 @@ import { Button } from '@components/Button';
 import { DateTimePicker } from '@components/DateTimePicker';
 
 import { Container, Content, Footer, Title } from './styles';
+import { useEventsDatabase } from '@database/useEventsDatabase';
 
 export function Home() {
   // Hooks
   const navigation = useNavigation<AppNavigatorRoutesProps>();
+  const eventsDatabase = useEventsDatabase();
 
   // States
+  const [isLoading, setIsLoading] = useState(false);
   const [eventName, setEventName] = useState('');
   const [eventDate, setEventDate] = useState('');
 
   // Methods
   const handleGoRegisterParticipants = () => {
+    navigation.navigate('registerParticipants', { eventName, eventDate });
+  };
+
+  const handleCreateEvent = async () => {
     if (!eventName) {
       Alert.alert('Event name is empty!', 'Please inform the event name.');
       return;
@@ -34,7 +41,24 @@ export function Home() {
       return;
     }
 
-    navigation.navigate('registerParticipants', { eventName, eventDate });
+    try {
+      setIsLoading(true);
+      const response  = await eventsDatabase.create({ name: eventName, date: eventDate });
+      Alert.alert('Event created!', `Event ${eventName} created with id ${response.insertedRowId}!` , [
+        {
+          text: 'Go to register participants',
+          onPress: handleGoRegisterParticipants
+        },
+        {
+          text: 'Go to events list',
+          onPress: () => console.log('Go to events list')
+        }
+      ]);
+    } catch (error) {
+      console.error('Error creating event:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Renders
@@ -68,7 +92,9 @@ export function Home() {
         />
         <Button
           title='Create event'
-          onPress={handleGoRegisterParticipants}
+          disabled={isLoading}
+          isLoading={isLoading}
+          onPress={handleCreateEvent}
         />
       </Content>
 

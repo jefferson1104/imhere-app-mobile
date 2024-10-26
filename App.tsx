@@ -1,8 +1,11 @@
 import { StatusBar } from 'react-native';
 import { ThemeProvider } from 'styled-components';
+import { SQLiteProvider } from 'expo-sqlite';
 import { useFonts, Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 
 import { Routes } from './src/routes';
+
+import { initializeDatabase } from '@database/initializeDatabase';
 
 import theme from './src/theme';
 
@@ -14,13 +17,15 @@ export default function App() {
 
   // Renders
   return (
-    <ThemeProvider theme={theme}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="transparent"
-        translucent
-      />
-      {fontsLoaded ? <Routes /> : <Loading />}
-    </ThemeProvider>
+    <SQLiteProvider databaseName='imHereSqlite.db' onInit={initializeDatabase}>
+      <ThemeProvider theme={theme}>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+        {fontsLoaded ? <Routes /> : <Loading />}
+      </ThemeProvider>
+    </SQLiteProvider>
   );
 }
