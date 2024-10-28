@@ -1,16 +1,15 @@
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { Home } from '@screens/Home';
+import { Event } from '@screens/event';
 import { EventList } from '@screens/eventList';
-import { RegisterParticipants } from '@screens/registerParticipants';
 
 export type AppRoutesParams = {
   home: undefined;
   eventList: undefined;
-  registerParticipants: {
-    eventName: string;
-    eventDate: string;
-  };
+  event: {
+    eventId: number;
+  }
 };
 
 export type AppNavigatorRoutesProps = NativeStackNavigationProp<AppRoutesParams>;
@@ -27,13 +26,13 @@ export function AppRoutes() {
       />
 
       <Screen
-        name="eventList"
-        component={EventList}
+        name="event"
+        component={Event}
       />
 
       <Screen
-        name="registerParticipants"
-        component={RegisterParticipants}
+        name="eventList"
+        component={EventList}
       />
     </Navigator>
   );

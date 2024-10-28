@@ -27,8 +27,8 @@ export function Home() {
   const [eventDate, setEventDate] = useState('');
 
   // Methods
-  const handleGoRegisterParticipants = () => {
-    navigation.navigate('registerParticipants', { eventName, eventDate });
+  const handleGoToEvent = (id: number) => {
+    navigation.navigate('event', { eventId: id });
   };
 
   const handleGoToEventList = () => {
@@ -51,8 +51,8 @@ export function Home() {
       const response  = await eventsDatabase.create({ name: eventName.trim(), date: eventDate });
       Alert.alert('Event created!', `Event ${eventName} created with id ${response.insertedRowId}!` , [
         {
-          text: 'Go to register participants',
-          onPress: handleGoRegisterParticipants
+          text: `Go to event ${eventName}`,
+          onPress: () => handleGoToEvent(Number(response.insertedRowId))
         },
         {
           text: 'Go to events list',

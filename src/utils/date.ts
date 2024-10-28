@@ -10,7 +10,9 @@ export function formatToAmericanDate(dateString?: Date): string {
   return `${month}/${day}/${year}`;
 }
 
-export function formatDateToLongString(dateString: string): string {
+export function formatDateToLongString(dateString?: string): string {
+  if (!dateString) return '';
+
   const date = new Date(dateString);
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',

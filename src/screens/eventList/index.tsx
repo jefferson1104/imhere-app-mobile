@@ -10,7 +10,7 @@ import { Header } from "@components/Header";
 import { EventCard } from "@components/EventCard";
 import { Loading } from "@components/Loading";
 
-import { Container, Title } from "./styles";
+import { Container, FilterButton, Filters, FilterText, Title } from "./styles";
 
 export function EventList() {
   // Hooks
@@ -19,6 +19,14 @@ export function EventList() {
   // States
   const [isLoading, setIsLoading] = useState(true);
   const [eventList, setEventList] = useState<IEvent[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState('ALL');
+
+  // Constants
+  const filters = [
+    { label: 'All', value: 'ALL' },
+    { label: 'Open', value: 'OPEN' },
+    { label: 'Closed', value: 'CLOSED' },
+  ];
 
   // Methods
   const listEvents = async () => {
@@ -33,16 +41,48 @@ export function EventList() {
     }
   };
 
+  const listEventsByStatus = async (status: string) => {
+    try {
+      setIsLoading(true)
+      const response = await eventsDatabase.listByStatus(status);
+      setEventList(response as IEvent[]);
+    } catch (error) {
+      console.error('Error listing events:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Effects
   useFocusEffect(useCallback(() => {
-    listEvents();
-  }, []));
+    if (selectedFilter === 'ALL') {
+      listEvents();
+    }
+
+    if (selectedFilter !== 'ALL') {
+      listEventsByStatus(selectedFilter);
+    }
+  }, [selectedFilter]));
 
   // Renders
   return (
     <Container>
       <Header showBackButton />
       <Title>Event List</Title>
+
+      <Filters>
+        {filters.map(filter => (
+          <FilterButton
+            key={filter.value}
+            onPress={() => setSelectedFilter(filter.value)}
+            isSelected={selectedFilter === filter.value}
+          >
+            <FilterText>
+              {filter.label}
+            </FilterText>
+          </FilterButton>
+        ))}
+      </Filters>
 
       {isLoading && (
         <Loading style={{ alignSelf: 'center', marginTop: 32 }} />
