@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { IEvent } from "@interfaces/event";
 
@@ -32,10 +33,10 @@ export function EventList() {
     }
   };
 
-  // Effects 2
-  useEffect(() => {
+  // Effects
+  useFocusEffect(useCallback(() => {
     listEvents();
-  }, []);
+  }, []));
 
   // Renders
   return (

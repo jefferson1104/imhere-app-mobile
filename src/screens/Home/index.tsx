@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { Image } from 'expo-image';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
 
@@ -68,10 +68,10 @@ export function Home() {
   };
 
   // Effects
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     setEventName('');
     setEventDate('');
-  }, [])
+  }, []));
 
   // Renders
   return (
