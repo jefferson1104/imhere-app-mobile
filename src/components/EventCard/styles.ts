@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.TouchableOpacity`
+  flex: 1;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -11,10 +12,12 @@ export const Container = styled.TouchableOpacity`
 `;
 
 export const Content = styled.View`
-  gap: 5px;
+  flex: 1;
+  gap: 4px;
 `;
 
 export const EventName = styled.Text`
+  flex: 1;
   font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
   font-size: ${({ theme }) => theme.FONT_SIZE.LG}px;
   color: ${({ theme }) => theme.COLORS.GRAY_100};

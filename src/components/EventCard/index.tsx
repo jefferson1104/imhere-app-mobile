@@ -27,7 +27,7 @@ export function EventCard({ id, name, date, status }: IEvent) {
   return (
     <Container onPress={() => handleGoToEvent(Number(id))}>
       <Content>
-        <EventName>{name}</EventName>
+        <EventName numberOfLines={1}>{name}</EventName>
         <EventDate>
           {formatDateToLongString(date)}
         </EventDate>

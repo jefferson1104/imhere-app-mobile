@@ -76,7 +76,7 @@ export function Event() {
 
       {!isLoading && event && (
         <Content>
-          <EventTitle>{event.name}</EventTitle>
+          <EventTitle numberOfLines={1}>{event.name}</EventTitle>
           <EventDate>{formatDateToLongString(event.date)}</EventDate>
           <EventStatus status={event.status} />
         </Content>
