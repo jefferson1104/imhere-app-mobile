@@ -1,17 +1,21 @@
 import { TouchableOpacityProps } from 'react-native';
 
-import { Container, ButtonTypeStyleProps } from './styles';
+import { Container } from './styles';
+
+export type IButtonIconType = 'DEFAULT' | 'DANGER';
 
 interface IButtonProps extends TouchableOpacityProps {
-  type?: ButtonTypeStyleProps;
+  type?: IButtonIconType;
+  disabled?: boolean;
   icon: React.ReactNode | JSX.Element;
 }
 
-export function ButtonIcon({ icon, type = 'PRIMARY', ...rest }: IButtonProps) {
+export function ButtonIcon({ icon, type = 'DEFAULT', disabled = false, ...rest }: IButtonProps) {
   // Renders
   return (
     <Container
       type={type}
+      disabled={disabled}
       {...rest}
     >
       {icon}

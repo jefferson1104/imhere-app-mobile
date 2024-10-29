@@ -9,6 +9,9 @@ export const Container = styled(SafeAreaView)`
 
 export const Content = styled.View`
   flex: 1;
+`;
+
+export const EventInfo = styled.View`
   gap: 4px;
 `;
 
@@ -24,8 +27,29 @@ export const EventDate = styled.Text`
   color: ${({ theme }) => theme.COLORS.GRAY_300};
 `;
 
-export const Footer = styled.View`
+export const ParticipantsContainer = styled.View`
   flex: 1;
+  margin-top: 16px;
+`;
+
+export const Form = styled.View`
+  flex-direction: row;
+  gap: 8px;
+`;
+
+export const EmptyList = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin-top: 128px;
+`;
+
+export const EmptyListDescription = styled.Text`
+  font-family: ${({ theme }) => theme.FONT_FAMILY.REGULAR};
+  font-size: ${({ theme }) => theme.FONT_SIZE.MD}px;
+  color: ${({ theme }) => theme.COLORS.GRAY_300};
+`;
+
+export const Footer = styled.View`
   justify-content: flex-end;
-  margin-bottom: 32px;
 `;

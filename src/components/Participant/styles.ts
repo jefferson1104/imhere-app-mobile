@@ -1,30 +1,19 @@
-import { StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
 
-export const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    backgroundColor: '#1F1E25',
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  name: {
-    flex: 1,
-    fontSize: 16,
-    color: '#FFF',
-    padding: 16,
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 24,
-  },
-  button: {
-    width: 56,
-    height: 56,
-    borderRadius: 5,
-    backgroundColor: '#E23C44',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export const Container = styled.View`
+  flex-direction: row;
+  align-items: center;
+
+  gap: 16px;
+  margin-bottom: 16px;
+  border-radius: 5px;
+
+  background-color: ${({ theme }) => theme.COLORS.GRAY_500};
+`;
+
+export const Name = styled.Text`
+  flex: 1;
+  font-size: 16px;
+  color: ${({ theme }) => theme.COLORS.WHITE};
+  padding: 16px;
+`;

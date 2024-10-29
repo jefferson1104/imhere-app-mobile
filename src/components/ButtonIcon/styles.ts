@@ -1,10 +1,10 @@
 import { TouchableOpacity } from 'react-native';
-import styled, { css } from 'styled-components/native';
+import styled from 'styled-components/native';
 
-export type ButtonTypeStyleProps = 'PRIMARY' | 'SECONDARY';
+import { IButtonIconType } from '.';
 
 export type ButtonProps = {
-  type: ButtonTypeStyleProps;
+  type: IButtonIconType;
 };
 
 export const Container = styled(TouchableOpacity)<ButtonProps>`
@@ -14,7 +14,12 @@ export const Container = styled(TouchableOpacity)<ButtonProps>`
   width: 56px;
   height: 56px;
 
-  background-color: ${({ theme, type }) => type === 'PRIMARY' ? theme.COLORS.BLUE : theme.COLORS.RED};
+  background-color: ${({ theme, type, disabled }) => type === 'DEFAULT' ? theme.COLORS.BLUE : theme.COLORS.RED};
+  background-color: ${({ theme, type, disabled }) => {
+    if (disabled) return theme.COLORS.GRAY_300;
+    if (type === 'DEFAULT') return theme.COLORS.BLUE;
+    if (type === 'DANGER') return theme.COLORS.RED;
+  }};
 
   border-radius: 6px;
 `;
