@@ -1,11 +1,13 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList } from "react-native";
 import { UserPlus } from "phosphor-react-native";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 
 import { IEvent } from "@interfaces/event";
+import { IParticipant } from "@interfaces/participants";
 
 import { useEventsDatabase } from "@database/useEventsDatabase";
+import { useParticipantsDatabase } from "@database/useParticipantsDatabase";
 
 import { AppRoutesParams } from "@routes/app.routes";
 
@@ -26,13 +28,14 @@ import { Container, EventTitle, EventDate, Footer, ParticipantsContainer, Form, 
 export function Event() {
   // Hooks
   const eventsDatabase = useEventsDatabase();
+  const participantsDatabase = useParticipantsDatabase();
   const route = useRoute<RouteProp<AppRoutesParams, 'event'>>();
 
   // States
   const [isLoading, setIsLoading] = useState(true);
   const [participantName, setParticipantName] = useState('');
   const [event, setEvent] = useState<IEvent>();
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
 
   // Constants
   const eventId = route.params.eventId;
@@ -45,6 +48,18 @@ export function Event() {
       setEvent(response[0] as IEvent);
     } catch (error) {
       console.error('Error getting event:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getParticipants = async () => {
+    try {
+      setIsLoading(true);
+      const response = await participantsDatabase.listParticipants(eventId);
+      setParticipants(response as IParticipant[]);
+    } catch (error) {
+      console.error('Error getting participants:', error);
     } finally {
       setIsLoading(false);
     }
@@ -69,29 +84,47 @@ export function Event() {
     }
   };
 
-  const handleParticipantAdd = () => {
+  const handleAddParticipant = async () => {
     if (!participantName) {
       Alert.alert('Participant name empty!', 'Enter the name of the participant.');
       return;
-    }
-
-    if (participants.includes(participantName)) {
-      Alert.alert('Participant already registered!', 'There is already a participant with that name.');
-      return;
-    }
-
-    setParticipants(prevState => [...prevState, participantName]);
-    setParticipantName('');
-  };
-
-  const handleParticipantRemove = (name: string) => {
-    const removeParticipant = () => {
-      const newParticipants = participants.filter(participant => participant !== name);
-      setParticipants(newParticipants);
-      Alert.alert(`The participant ${name} has been removed!`)
     };
 
-    Alert.alert('Remove participant!', `Would you like to remove ${name}?`, [
+    if (participants.some(participant => participant.name === participantName)) {
+      Alert.alert('Participant already registered!', 'There is already a participant with that name.');
+      return;
+    };
+
+    try {
+      setIsLoading(true);
+      await participantsDatabase.createParticipant({
+        name: participantName.trim(),
+        eventId
+      });
+      getParticipants();
+    } catch (error) {
+      console.error('Error adding participant:', error);
+    } finally {
+      setIsLoading(false);
+      setParticipantName('');
+    }
+  };
+
+  const handleRemoveParticipant = async (selectedParticipant: IParticipant) => {
+    const removeParticipant = async () => {
+      try {
+        setIsLoading(true);
+        await participantsDatabase.deleteParticipant(selectedParticipant.id);
+        getParticipants();
+        Alert.alert(`The participant ${selectedParticipant.name} has been removed!`)
+      } catch (error) {
+        console.error('Error removing participant:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    Alert.alert('Remove participant!', `Would you like to remove ${selectedParticipant.name}?`, [
       {
         text: 'yes',
         onPress: () => removeParticipant()
@@ -107,6 +140,12 @@ export function Event() {
   useFocusEffect(useCallback(() => {
     getEvent();
   }, []));
+
+  useEffect(() => {
+    if (eventId) {
+      getParticipants();
+    }
+  }, [eventId]);
 
   // Renders
   return (
@@ -133,7 +172,7 @@ export function Event() {
               />
               <ButtonIcon
                 disabled={event.status === 'CLOSED' ? true : false}
-                onPress={handleParticipantAdd}
+                onPress={handleAddParticipant}
                 icon={<UserPlus color={theme.COLORS.WHITE} size={32} />}
               />
             </Form>
@@ -144,13 +183,13 @@ export function Event() {
             )}
             <FlatList
               data={participants}
-              keyExtractor={item => item}
+              keyExtractor={item => item.id.toString()}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 148, overflow: 'hidden' }}
               renderItem={({ item }) => (
                 <Participant
-                  name={item}
-                  onRemove={() => handleParticipantRemove(item)}
+                  name={item.name}
+                  onRemove={() => handleRemoveParticipant(item)}
                 />
               )}
               ListEmptyComponent={() => (
