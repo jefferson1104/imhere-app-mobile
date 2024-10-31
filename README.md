@@ -64,6 +64,8 @@ $ npm run start
 
 ## 📸 ScreenShots
 
-<image src="./src/assets/images/image-01.png" width="300" />
-<image src="./src/assets/images/image-03.png" width="300" />
-<image src="./src/assets/images/image-02.png" width="300" />
+<div>
+  <image src="./src/assets/images/image-01.png" width="300" />
+  <image src="./src/assets/images/image-03.png" width="300" />
+  <image src="./src/assets/images/image-02.png" width="300" />
+</div>
