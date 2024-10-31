@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Alert, FlatList } from "react-native";
-import { UserPlus } from "phosphor-react-native";
+import { Alert, FlatList, TouchableOpacity } from "react-native";
+import { ArrowsClockwise, PencilLine, UserPlus } from "phosphor-react-native";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 
 import { IEvent } from "@interfaces/event";
@@ -23,7 +23,7 @@ import { Input } from "@components/Input";
 import { Loading } from "@components/Loading";
 import { Participant } from "@components/Participant";
 
-import { Container, EventTitle, EventDate, Footer, ParticipantsContainer, Form, EmptyList, EmptyListDescription, EventInfo, Content } from "./styles";
+import { Container, EventTitle, EventDate, Footer, ParticipantsContainer, Form, EmptyList, EmptyListDescription, EventInfo, Content, EventTitleContainer } from "./styles";
 
 export function Event() {
   // Hooks
@@ -36,6 +36,8 @@ export function Event() {
   const [participantName, setParticipantName] = useState('');
   const [event, setEvent] = useState<IEvent>();
   const [participants, setParticipants] = useState<IParticipant[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newEventName, setNewEventName] = useState('');
 
   // Constants
   const eventId = route.params.eventId;
@@ -65,7 +67,7 @@ export function Event() {
     }
   };
 
-  const handleUpdateEvent = async () => {
+  const handleUpdateStatus = async () => {
     if (event) {
       try {
         setIsLoading(true);
@@ -77,7 +79,28 @@ export function Event() {
         });
         getEvent();
       } catch (error) {
-        console.error('Error updating event:', error);
+        console.error('Error updating event status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleUpdateEventName = async () => {
+    if (event) {
+      try {
+        setIsLoading(true);
+        await eventsDatabase.updateById({
+          id: event.id,
+          name: newEventName,
+          date: event.date,
+          status: event.status,
+        });
+        setIsEditing(false);
+        setNewEventName('');
+        getEvent();
+      } catch (error) {
+        console.error('Error updating event name:', error);
       } finally {
         setIsLoading(false);
       }
@@ -157,7 +180,35 @@ export function Event() {
       <Content>
         {!isLoading && event && (
           <EventInfo>
-            <EventTitle numberOfLines={1}>{event.name}</EventTitle>
+            <EventTitleContainer>
+              {!isEditing && (
+                <>
+                  <EventTitle numberOfLines={1}>{event.name}</EventTitle>
+                  <TouchableOpacity onPress={() => setIsEditing(true)}>
+                    <PencilLine color={theme.COLORS.WHITE} size={24} />
+                  </TouchableOpacity>
+                </>
+              )}
+
+              {isEditing && (
+                <Form>
+                  <Input
+                    placeholder="Edit event name"
+                    onChangeText={(text) => setNewEventName(text)}
+                    value={newEventName}
+                  />
+                  <ButtonIcon
+                    onPress={handleUpdateEventName}
+                    icon={<ArrowsClockwise color={theme.COLORS.WHITE} size={32} />}
+                  />
+                </Form>
+              )}
+            </EventTitleContainer>
+
+
+
+
+
             <EventDate>{formatDateToLongString(event.date)}</EventDate>
             <EventStatus status={event.status} />
           </EventInfo>
@@ -208,14 +259,14 @@ export function Event() {
           <Button
             title='Close this event'
             type='DANGER'
-            onPress={handleUpdateEvent}
+            onPress={handleUpdateStatus}
             activeOpacity={0.7}
           />
         ) : (
           <Button
             title='Open this event'
             type='DEFAULT'
-            onPress={handleUpdateEvent}
+            onPress={handleUpdateStatus}
             activeOpacity={0.7}
           />
         )}

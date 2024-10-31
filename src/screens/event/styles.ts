@@ -15,10 +15,18 @@ export const EventInfo = styled.View`
   gap: 4px;
 `;
 
+
+export const EventTitleContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
 export const EventTitle = styled.Text`
   font-family: ${({ theme }) => theme.FONT_FAMILY.BOLD};
   font-size: ${({ theme }) => theme.FONT_SIZE.XL}px;
   color: ${({ theme }) => theme.COLORS.WHITE};
+  max-width: 90%;
 `;
 
 export const EventDate = styled.Text`
