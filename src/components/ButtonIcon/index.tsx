@@ -2,7 +2,7 @@ import { TouchableOpacityProps } from 'react-native';
 
 import { Container } from './styles';
 
-export type IButtonIconType = 'DEFAULT' | 'DANGER';
+export type IButtonIconType = 'DEFAULT' | 'SECONDARY' | 'DANGER';
 
 interface IButtonProps extends TouchableOpacityProps {
   type?: IButtonIconType;

@@ -55,5 +55,16 @@ export function useParticipantsDatabase() {
     }
   };
 
-  return { createParticipant, listParticipants, deleteParticipant};
+  async function searchParticipant(eventId: number, participantName: string) {
+    const query = "SELECT * FROM Participants WHERE event_id = ? AND name LIKE ?";
+
+    try {
+      const result = await database.getAllAsync(query, [eventId, `%${participantName}%`]);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return { createParticipant, listParticipants, deleteParticipant, searchParticipant};
 }

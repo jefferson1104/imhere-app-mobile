@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, TouchableOpacity } from "react-native";
-import { ArrowsClockwise, PencilLine, UserPlus } from "phosphor-react-native";
+import { ArrowsClockwise, MagnifyingGlass, PencilLine, UserPlus } from "phosphor-react-native";
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/native";
 
 import { IEvent } from "@interfaces/event";
@@ -159,6 +159,22 @@ export function Event() {
     ]);
   };
 
+  const handleSearchParticipant = async (participantName: string) => {
+    if (!participantName) {
+      getParticipants();
+    };
+
+    try {
+      setIsLoading(true);
+      const response = await participantsDatabase.searchParticipant(eventId, participantName);
+      setParticipants(response as IParticipant[]);
+    } catch (error) {
+      console.error('Error searching for participants:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Effects
   useFocusEffect(useCallback(() => {
     getEvent();
@@ -204,11 +220,6 @@ export function Event() {
                 </Form>
               )}
             </EventTitleContainer>
-
-
-
-
-
             <EventDate>{formatDateToLongString(event.date)}</EventDate>
             <EventStatus status={event.status} />
           </EventInfo>
@@ -217,9 +228,14 @@ export function Event() {
           <ParticipantsContainer>
             <Form>
               <Input
-                placeholder="Add guest"
+                placeholder="Guest name"
                 onChangeText={(text) => setParticipantName(text)}
                 value={participantName}
+              />
+              <ButtonIcon
+                type="SECONDARY"
+                onPress={() => handleSearchParticipant(participantName)}
+                icon={<MagnifyingGlass color={theme.COLORS.WHITE} size={32} />}
               />
               <ButtonIcon
                 disabled={event.status === 'CLOSED' ? true : false}
